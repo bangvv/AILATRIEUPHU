@@ -15,16 +15,13 @@ void Scores::updateData(bool isrank, QVector<ScorePointer>& list)
     if (isrank){
        // clearlist();
     }else{
-        clearlist();
-        qDebug() << "size: " << list.size();
         addScorePointers(list);
     }
 }
 
 Scores::Scores(QObject *parent): QAbstractListModel(parent)
 {
-    if(m_ScoresList.empty())
-        addScorePointer({"STT","Tên Người Chơi","Tiền Thưởng","Thời Gian"});
+
 }
 
 Scores::~Scores() {}
@@ -70,20 +67,17 @@ void Scores::addScorePointer(const ScorePointer &sp)
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_ScoresList.append(sp);
     endInsertRows();
-    qDebug() << "size(ScorePointer): " << m_ScoresList.size();
 }
 
 void Scores::addScorePointers(const QVector<ScorePointer> &spl)
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
-    m_ScoresList += spl;
+    m_ScoresList = spl;
     endInsertRows();
-    qDebug() << "size(QVector): " << m_ScoresList.size();
 }
 
 void Scores::clearlist()
 {
+    std::lock_guard<std::mutex> lock(mtex);
     m_ScoresList.clear();
-    qDebug() << "size(clearlist): " << m_ScoresList.size();
-    addScorePointer({"STT","Tên Người Chơi","Tiền Thưởng","Thời Gian"});
 }

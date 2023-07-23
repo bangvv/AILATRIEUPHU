@@ -67,11 +67,12 @@ void *thread_recv(void *arg)
         emit BackEnd::instance->rewardChanged();
         BackEnd::instance->prize++;
         emit BackEnd::instance->correctAnswer();
+        emit BackEnd::instance->statusGameChanged();
         return NULL;
       case WIN_PVP:
         BackEnd::instance->setIsRunGame(false);
         BackEnd::instance->status_game = WIN;
-        emit emit BackEnd::instance->statusGameChanged();
+
         if(strlen(msg.value) > 0){
           BackEnd::instance->correct_answer = atoi(msg.value);
           emit BackEnd::instance->lose();
@@ -226,6 +227,8 @@ BackEnd::BackEnd(QObject *parent) : QObject(parent)
   QObject::connect(this,&BackEnd::startCountTime,&CountTime::getCountTime(),&CountTime::Start);
   QObject::connect(this,&BackEnd::stopCountTime,&CountTime::getCountTime(),&CountTime::Stop);
   QObject::connect(this,&BackEnd::statusGameChanged,this,&BackEnd::saveResult);
+  QObject::connect(this,&BackEnd::signalUpdateScoreList,this,&BackEnd::Update);
+  m_ScoresList.clear();
 }
 
 BackEnd::~BackEnd()
@@ -673,33 +676,45 @@ void BackEnd::saveResult()
     }
 }
 
+void BackEnd::Update()
+{
+    Scores::instance()->updateData(false, m_ScoresList);
+}
+
 QVector<ScorePointer> BackEnd::getScoresList() const
 {
     return m_ScoresList;
 }
-
+std::mutex BackEnd::mtx;
 void BackEnd::reciScoreList(const QString& data)
 {
+//    std::lock_guard<std::mutex> lock(mtx);
     qDebug() << "OKOK";
     qDebug() << "bang check:";
     QString str = data;
     QStringList list = str.split('|');
-//    static int index = 1;
-    if (list.size() == 4){
+    qDebug() << "size list: " << list.size();
+    //if (list.size() == 4)
+    {
         // qDebug() << list.at(0) << ' : ' << list.at(1) << ' : ' << list.at(2) << ' : ' <<list.at(3);
         ScorePointer data{list.at(0),list.at(1),list.at(2)+'$',QString::number(stoi(list.at(3).toStdString())/60)+'m'+QString::number(stoi(list.at(3).toStdString())%60)+'s'};
+        qDebug() << "m_ScoresList.empty(): " << m_ScoresList.empty();
+        qDebug() << "m_ScoresList.size(): " << m_ScoresList.size();
+        qDebug() << "!m_ScoresList.contains(data): " << !m_ScoresList.contains(data);
+
         if(m_ScoresList.empty()||!m_ScoresList.contains(data)){
-            if (m_ScoresList.size()<10)
+            if (m_ScoresList.size()<10){
                 m_ScoresList.append({QString::number(m_ScoresList.size()+1),list.at(1),list.at(2)+'$',QString::number(stoi(list.at(3).toStdString())/60)+'m'+QString::number(stoi(list.at(3).toStdString())%60)+'s'});
-            else{
+                emit signalUpdateScoreList();
+            }else{
                 m_ScoresList.erase(m_ScoresList.begin());
                 for(auto i = m_ScoresList.begin(); i!= m_ScoresList.end(); i++)
                 {
                     i->m_stt = QString::number(stoi((i->m_stt).toStdString())-1);
                 }
                 m_ScoresList.append({QString::number(m_ScoresList.size()+1),list.at(1),list.at(2)+'$',QString::number(stoi(list.at(3).toStdString())/60)+'m'+QString::number(stoi(list.at(3).toStdString())%60)+'s'});
-            }
-            Scores::instance()->updateData(false, m_ScoresList);
+                emit signalUpdateScoreList();
+            }           
         }
     }
 }

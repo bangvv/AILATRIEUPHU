@@ -46,6 +46,59 @@ Page {
         y: 70
         width: 400
         height: 500
+        model: ListModel {
+            ListElement { name: "STT"}
+        }
+        interactive:false;
+        delegate: Item {
+            width: ListView.view.width
+            height: 30
+            Row{
+                Text {
+                    width: 40
+                    id: stt
+                    text: "STT"
+                    horizontalAlignment: Text.AlignHCenter
+                    color: "white"
+                    font.pixelSize: 16
+                    font.family: "roboto"
+                }
+                Text {
+                    width: 160
+                    id: tennguoichoi
+                    text: "Tên Người Chơi"
+                    horizontalAlignment: Text.AlignHCenter
+                    color: "white"
+                    font.pixelSize: 16
+                    font.family: "roboto"
+                }
+                Text {
+                    width: 100
+                    id: tienthuong
+                    text: "Tiền Thưởng"
+                    horizontalAlignment: Text.AlignHCenter
+                    color: "white"
+                    font.pixelSize: 16
+                    font.family: "roboto"
+                }
+                Text {
+                    width: 100
+                    id: thoigian
+                    text: "Thời Gian"
+                    horizontalAlignment: Text.AlignHCenter
+                    color: "white"
+                    font.pixelSize: 16
+                    font.family: "roboto"
+                }
+            }
+        }
+    }
+
+    ListView {
+        x: 40
+        y: 100
+        width: 400
+        height: 500
 
         model:scid
 
@@ -56,7 +109,6 @@ Page {
             height: 30
 
             ScorePointer{
-                id: sp
                 tex1: model.stt
                 tex2: model.ten
                 tex3: model.diem

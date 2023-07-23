@@ -3,10 +3,10 @@ import QtQuick.Controls 2.5
 
 Item {
     property var colortext
-    property var tex1
-    property var tex2
-    property var tex3
-    property var tex4
+    property string tex1
+    property string tex2
+    property string tex3
+    property string tex4
     Rectangle{
         anchors.fill: parent
         Row{

@@ -112,6 +112,7 @@ public:
 
 public slots:
     void saveResult();
+    void Update();
 
 signals:
     void userNameChanged();
@@ -153,6 +154,7 @@ signals:
     void showResultPvP();
     void startCountTime();
     void stopCountTime();
+    void signalUpdateScoreList();
 
 private:
     void countTimer();
@@ -163,5 +165,6 @@ private:
     bool m_isRunGame;
     QVector<ScorePointer> m_ScoresList;
     static int m_SizeScoresList;
+    static std::mutex mtx;
 };
 #endif // BACKEND_H
