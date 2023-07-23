@@ -650,13 +650,12 @@ void BackEnd::saveResult()
         m_SizeScoresList= m_ScoresList.size();
     else
         m_SizeScoresList++;
-    //ScorePointer data{QString::number(m_SizeScoresList),user_name,QString::number(reward)+'$',QString::number(CountTime::getCountTime().getSecond()/60)+'m'+QString::number(CountTime::getCountTime().getSecond()/60)+'s'};
-    //m_ScoresList.append(data);
+
     resetCountSeconds();
 
     Message msg;
     int sendBytes;
-    QString vls = user_name+'|'+QString::number(reward)+'|'+QString::number(CountTime::getCountTime().getSecond())+QString::number(CountTime::getCountTime().getSecond());
+    QString vls = user_name+'|'+QString::number(reward)+'|'+QString::number(CountTime::getCountTime().getSecond());
     msg.type = SEND_SCORE_ALONE;
 
     memset(msg.value,'\0',1024);
@@ -687,10 +686,19 @@ void BackEnd::reciScoreList(const QString& data)
     QStringList list = str.split('|');
 //    static int index = 1;
     if (list.size() == 4){
-        qDebug() << list.at(0) << ' : ' << list.at(1) << ' : ' << list.at(2) << ' : ' <<list.at(3);
-        ScorePointer data{list.at(0),list.at(1),list.at(2),list.at(3)};
+        // qDebug() << list.at(0) << ' : ' << list.at(1) << ' : ' << list.at(2) << ' : ' <<list.at(3);
+        ScorePointer data{list.at(0),list.at(1),list.at(2)+'$',QString::number(stoi(list.at(3).toStdString())/60)+'m'+QString::number(stoi(list.at(3).toStdString())%60)+'s'};
         if(m_ScoresList.empty()||!m_ScoresList.contains(data)){
-            m_ScoresList.append({list.at(0),list.at(1),list.at(2),list.at(3)});
+            if (m_ScoresList.size()<10)
+                m_ScoresList.append({QString::number(m_ScoresList.size()+1),list.at(1),list.at(2)+'$',QString::number(stoi(list.at(3).toStdString())/60)+'m'+QString::number(stoi(list.at(3).toStdString())%60)+'s'});
+            else{
+                m_ScoresList.erase(m_ScoresList.begin());
+                for(auto i = m_ScoresList.begin(); i!= m_ScoresList.end(); i++)
+                {
+                    i->m_stt = QString::number(stoi((i->m_stt).toStdString())-1);
+                }
+                m_ScoresList.append({QString::number(m_ScoresList.size()+1),list.at(1),list.at(2)+'$',QString::number(stoi(list.at(3).toStdString())/60)+'m'+QString::number(stoi(list.at(3).toStdString())%60)+'s'});
+            }
             Scores::instance()->updateData(false, m_ScoresList);
         }
     }

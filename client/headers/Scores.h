@@ -16,7 +16,7 @@ typedef struct ScorePointer {
     QString m_time;
 
     bool operator ==(const ScorePointer& sp) const {
-        return (m_stt == sp.m_stt) && (m_ten == sp.m_ten) && (m_diem == sp.m_diem) && (m_time == sp.m_time);
+        return (m_ten == sp.m_ten) && (m_diem == sp.m_diem) && (m_time == sp.m_time);
     }
 }ScorePointer;
 
