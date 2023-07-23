@@ -1,0 +1,167 @@
+#ifndef BACKEND_H
+#define BACKEND_H
+#include <QObject>
+#include <string>
+#include <QTimer>
+#include <QVector>
+#include "Scores.h"
+
+extern "C" {
+  #include "Utils.h"
+}
+
+class BackEnd : public QObject
+{
+    Q_OBJECT
+public:
+    static std::string server_ip;
+    static int server_port;
+    int prize;
+    QString question;
+    QString a;
+    QString b;
+    QString c;
+    QString d;
+    QString call_phone_answer;
+    int voteA;
+    int voteB;
+    int voteC;
+    int voteD;
+    int correct_answer;
+    int reward;
+    int enemy_current_question;
+    int enemy_seconds;
+    QString enemy_status;
+    int status_game;
+    static BackEnd *instance;
+    Q_PROPERTY(QString user_name READ getUserName WRITE setUserName NOTIFY userNameChanged);
+    Q_PROPERTY(QString enemy_name READ getEnemyName WRITE setEnemyName NOTIFY enemyNameChanged);
+    Q_PROPERTY(int prize READ getPrize WRITE setPrize NOTIFY prizeChanged);
+    Q_PROPERTY(QString question READ getQuestion NOTIFY questionChanged);
+    Q_PROPERTY(QString a READ getA NOTIFY aChanged);
+    Q_PROPERTY(QString b READ getB NOTIFY bChanged);
+    Q_PROPERTY(QString c READ getC NOTIFY cChanged);
+    Q_PROPERTY(QString d READ getD NOTIFY dChanged);
+    Q_PROPERTY(QString call_phone_answer READ getCallPhoneAnswer NOTIFY callPhoneAnswerChanged);
+    Q_PROPERTY(int enemy_current_question READ getEnemyCurrentQuestion WRITE setEnemyCurrentQuestion NOTIFY enemyCurrentQuestionChanged);
+    Q_PROPERTY(int enemy_seconds READ getEnemySeconds WRITE setEnemySeconds NOTIFY enemySecondsChanged);
+    Q_PROPERTY(QString enemy_status READ getEnemyStatus WRITE setEnemyStatus NOTIFY enemyStatusChanged);
+    Q_PROPERTY(int voteA READ getVoteA NOTIFY voteAChanged);
+    Q_PROPERTY(int voteB READ getVoteB NOTIFY voteBChanged);
+    Q_PROPERTY(int voteC READ getVoteC NOTIFY voteCChanged);
+    Q_PROPERTY(int voteD READ getVoteD NOTIFY voteDChanged);
+    Q_PROPERTY(int correct_answer READ getCorrectAnswer);
+    Q_PROPERTY(int reward READ getReward WRITE setReward NOTIFY rewardChanged);
+    Q_PROPERTY(int status_game READ getStatusGame WRITE setStatusGame NOTIFY statusGameChanged);
+
+    explicit BackEnd(QObject *parent = nullptr);
+    ~BackEnd();
+    QString getUserName() const;
+    void setUserName(const QString &value);
+    QString getEnemyName() const;
+    void setEnemyName(const QString &value);
+    int getPrize();
+    void setPrize(int value);
+    QString getQuestion();
+    QString getA();
+    QString getB();
+    QString getC();
+    QString getD();
+    QString getCallPhoneAnswer();
+    int getReward();
+    void setReward(int value);
+    int getCorrectAnswer();
+    int getVoteA();
+    int getVoteB();
+    int getVoteC();
+    int getVoteD();
+    int getEnemyCurrentQuestion();
+    void setEnemyCurrentQuestion(int value);
+    int getEnemySeconds();
+    void setEnemySeconds(int value);
+    QString getEnemyStatus();
+    void setEnemyStatus(QString value);
+    int getStatusGame();
+    void setStatusGame(int value);
+
+
+    Q_INVOKABLE void connectToServer();
+    Q_INVOKABLE void disconnectToServer();
+    Q_INVOKABLE void signIn(QString username, QString password);
+    Q_INVOKABLE void signUp(QString username, QString password);
+    Q_INVOKABLE void logOut();
+    Q_INVOKABLE void changePassword(QString newPassword);
+    Q_INVOKABLE void playAlone();
+    Q_INVOKABLE void choiceAnswer(int answer, int time);
+    Q_INVOKABLE void fiftyFifty();
+    Q_INVOKABLE void callPhone();
+    Q_INVOKABLE void vote();
+    Q_INVOKABLE void changeQuestion();
+    Q_INVOKABLE void stopGame();
+    Q_INVOKABLE void overTime();
+    Q_INVOKABLE void playPvP();
+    Q_INVOKABLE void requestResultList(bool isScoreAlone);
+ //   Q_INVOKABLE void resetScoreScreen();
+
+public:
+    void setIsRunGame(bool isRunGame);
+    bool isRunGame() const;
+    void resetCountSeconds();
+    QVector<ScorePointer> getScoresList() const;
+    void reciScoreList(const QString& data);
+
+public slots:
+    void saveResult();
+
+signals:
+    void userNameChanged();
+    void enemyNameChanged();
+    void prizeChanged();
+    void questionChanged();
+    void aChanged();
+    void bChanged();
+    void cChanged();
+    void dChanged();
+    void connectSuccess();
+    void connectFail();
+    void loginSuccess();
+    void loggedIn();
+    void accountBlocked();
+    void accountNotExist();
+    void wrongPassword();
+    void signupSuccess();
+    void accountExist();
+    void changePasswordSuccess();
+    void sameOldPassword();
+    void callPhoneAnswerChanged();
+    void voteAChanged();
+    void voteBChanged();
+    void voteCChanged();
+    void voteDChanged();
+    void correctAnswer();
+    void rewardChanged();
+    void lose();
+    void lose2();
+    void foundPlayer();
+    void openVote();
+    void openCallPhone();
+    void notFoundPlayer();
+    void enemyCurrentQuestionChanged();
+    void enemySecondsChanged();
+    void enemyStatusChanged();
+    void statusGameChanged();
+    void showResultPvP();
+    void startCountTime();
+    void stopCountTime();
+
+private:
+    void countTimer();
+    QString user_name;
+    QString enemy_name;
+//    QTimer *m_timer;
+//    int m_seconds;
+    bool m_isRunGame;
+    QVector<ScorePointer> m_ScoresList;
+    static int m_SizeScoresList;
+};
+#endif // BACKEND_H
