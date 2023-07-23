@@ -21,6 +21,7 @@
 
 enum msg_type
 {
+  NONE = -1,
   DISCONNECT,
   LOGIN,
   LOGIN_SUCCESS,
@@ -55,7 +56,9 @@ enum msg_type
   VOTE,
   CHANGE_QUESTION,
   SEND_SCORE_ALONE,
-  RECV_SCORE_ALONE
+  RECV_SCORE_ALONE,
+  STOP_GAME_PVP,
+  OVER_TIME_PVP,
 };
 
 enum login_status
@@ -871,7 +874,7 @@ recvLabel2:
 
       switch (msg.type)
       {
-      case OVER_TIME:
+      case OVER_TIME_PVP:
         room->play_status[index_in_room] = 2;
         if (room->play_status[index_doi_thu_in_room] == 1 || room->play_status[index_doi_thu_in_room] == 2)
         {
@@ -888,7 +891,7 @@ recvLabel2:
           send(conn_fd, &msg, sizeof(msg), 0);
         }
         return 0;
-      case STOP_GAME:
+      case STOP_GAME_PVP:
         room->play_status[index_in_room] = 1;
         if (room->play_status[index_doi_thu_in_room] == 1 || room->play_status[index_doi_thu_in_room] == 2)
         {
