@@ -90,9 +90,12 @@ void *thread_recv(void *arg)
       case LOSE_PVP:
         BackEnd::instance->setIsRunGame(false);
         BackEnd::instance->status_game = LOSE;
-        emit BackEnd::instance->statusGameChanged();
         emit BackEnd::instance->showResultPvP();
         return NULL;
+      case STOP_GAME_PVP:
+      case OVER_TIME_PVP:
+          //Todo:
+          break;
       case STOP_GAME:
       case OVER_TIME:
         BackEnd::instance->setIsRunGame(false);
@@ -196,6 +199,7 @@ void *thread_recv(void *arg)
         qDebug() << "Receiver data from server";
  //       BackEnd::instance->resetScoreScreen();
         BackEnd::instance->reciScoreList(msg.value);
+        msg.type = msg_type::NONE;
         break;
       default:
         break;
@@ -648,7 +652,7 @@ void BackEnd::resetCountSeconds()
 int BackEnd::m_SizeScoresList = 0;
 void BackEnd::saveResult()
 {
-
+    qDebug() << "sai";
     if(m_ScoresList.size()!= 0)
         m_SizeScoresList= m_ScoresList.size();
     else

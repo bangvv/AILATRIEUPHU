@@ -17,6 +17,7 @@
 
 enum msg_type
 {
+  NONE = -1,
   DISCONNECT,
   LOGIN,
   LOGIN_SUCCESS,
@@ -51,7 +52,9 @@ enum msg_type
   VOTE,
   CHANGE_QUESTION,
   SEND_SCORE_ALONE,
-  RECV_SCORE_ALONE
+  RECV_SCORE_ALONE,
+  STOP_GAME_PVP,
+  OVER_TIME_PVP,
 };
 
 typedef struct _message
