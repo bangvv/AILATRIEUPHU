@@ -942,7 +942,7 @@ recvLabel2:
           }
           else {
             sleep(2);
-            msg.type = LOSE;
+            msg.type = LOSE_PVP;
             sprintf(str, "%d", room->questions[index_in_room].answer[room->index_current_question[index_in_room] - 1]);
             strcpy(msg.value, str);
             send(conn_fd, &msg, sizeof(msg), 0);

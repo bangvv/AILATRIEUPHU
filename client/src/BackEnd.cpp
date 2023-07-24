@@ -60,18 +60,18 @@ void *thread_recv(void *arg)
         emit BackEnd::instance->correctAnswer();
         break;
       case WIN:
-        BackEnd::instance->setIsRunGame(false);
-        BackEnd::instance->status_game = WIN;
-        BackEnd::instance->correct_answer = atoi(strtok(msg.value, " "));
-        BackEnd::instance->reward = atoi(strtok(NULL, " "));
-        emit BackEnd::instance->rewardChanged();
-        BackEnd::instance->prize++;
-        emit BackEnd::instance->correctAnswer();
-        emit BackEnd::instance->statusGameChanged();
+//        BackEnd::instance->setIsRunGame(false);
+//        BackEnd::instance->status_game = WIN;
+//        BackEnd::instance->correct_answer = atoi(strtok(msg.value, " "));
+//        BackEnd::instance->reward = atoi(strtok(NULL, " "));
+//        emit BackEnd::instance->rewardChanged();
+//        BackEnd::instance->prize++;
+//        emit BackEnd::instance->correctAnswer();
+//        emit BackEnd::instance->statusGameChanged();
         return NULL;
       case WIN_PVP:
         BackEnd::instance->setIsRunGame(false);
-        BackEnd::instance->status_game = WIN;
+        BackEnd::instance->status_game = WIN_PVP;
 
         if(strlen(msg.value) > 0){
           BackEnd::instance->correct_answer = atoi(msg.value);
@@ -89,12 +89,13 @@ void *thread_recv(void *arg)
         return NULL;
       case LOSE_PVP:
         BackEnd::instance->setIsRunGame(false);
-        BackEnd::instance->status_game = LOSE;
+        BackEnd::instance->status_game = LOSE_PVP;
+//        emit BackEnd::instance->statusGameChanged();
         emit BackEnd::instance->showResultPvP();
         return NULL;
       case STOP_GAME_PVP:
       case OVER_TIME_PVP:
-          //Todo:
+          //TODO
           break;
       case STOP_GAME:
       case OVER_TIME:
@@ -199,7 +200,6 @@ void *thread_recv(void *arg)
         qDebug() << "Receiver data from server";
  //       BackEnd::instance->resetScoreScreen();
         BackEnd::instance->reciScoreList(msg.value);
-        msg.type = msg_type::NONE;
         break;
       default:
         break;
@@ -652,7 +652,7 @@ void BackEnd::resetCountSeconds()
 int BackEnd::m_SizeScoresList = 0;
 void BackEnd::saveResult()
 {
-    qDebug() << "sai";
+
     if(m_ScoresList.size()!= 0)
         m_SizeScoresList= m_ScoresList.size();
     else
